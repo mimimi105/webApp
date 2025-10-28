@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>文字列破損ツール</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #f5f5f5;
+            }
+
+            .container {
+                background-color: white;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            h1 {
+                color: #333;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            textarea {
+                width: 100%;
+                height: 200px;
+                padding: 15px;
+                border: 2px solid #ddd;
+                border-radius: 5px;
+                font-size: 14px;
+                line-height: 1.5;
+                resize: vertical;
+                box-sizing: border-box;
+            }
+
+            textarea:focus {
+                outline: none;
+                border-color: #4caf50;
+            }
+
+            button {
+                background-color: #4caf50;
+                color: white;
+                padding: 12px 24px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+                margin: 10px 5px;
+                transition: background-color 0.3s;
+            }
+
+            button:hover {
+                background-color: #45a049;
+            }
+
+            .button-group {
+                text-align: center;
+                margin: 20px 0;
+            }
+
+            .result {
+                margin-top: 20px;
+                padding: 15px;
+                background-color: #f9f9f9;
+                border-radius: 5px;
+                border-left: 4px solid #4caf50;
+            }
+
+            .sample-text {
+                font-style: italic;
+                color: #666;
+                margin-bottom: 10px;
+            }
+
+            .corruption-controls {
+                margin: 20px 0;
+                padding: 15px;
+                background-color: #f9f9f9;
+                border-radius: 5px;
+                border-left: 4px solid #4caf50;
+            }
+
+            .corruption-controls label {
+                display: block;
+                margin-bottom: 10px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .corruption-controls input[type="range"] {
+                width: 100%;
+                height: 6px;
+                border-radius: 3px;
+                background: #ddd;
+                outline: none;
+                -webkit-appearance: none;
+            }
+
+            .corruption-controls input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #4caf50;
+                cursor: pointer;
+            }
+
+            .corruption-controls input[type="range"]::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #4caf50;
+                cursor: pointer;
+                border: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>文字列破損ツール</h1>
+
+            <div class="sample-text">文字列を破損率に応じてランダムに順番を入れかえ、破損させることができます。</div>
+
+            <div class="corruption-controls">
+                <label for="corruptionRate">破損率: <span id="rateValue">5</span>%</label>
+                <input type="range" id="corruptionRate" min="1" max="100" value="5" oninput="updateRateValue()" />
+            </div>
+
+            <textarea id="inputText" placeholder="ここにテキストを入力してください..."></textarea>
+
+            <div class="button-group">
+                <button onclick="corruptText()">文字列を破損させる</button>
+                <button onclick="clearText()">クリア</button>
+                <button onclick="loadSampleText()">サンプルテキストを入力</button>
+            </div>
+
+            <div id="result" class="result" style="display: none">
+                <h3>破損されたテキスト:</h3>
+                <div id="corruptedText"></div>
+            </div>
+        </div>
+
+        <script>
+            function shuffleWithRate(str, corruptionRate) {
+                const arr = Array.from(str);
+                const moveCount = Math.max(1, Math.floor(arr.length * (corruptionRate / 100)));
+
+                for (let i = 0; i < moveCount; i++) {
+                    const from = Math.floor(Math.random() * arr.length);
+                    const to = Math.floor(Math.random() * arr.length);
+                    const [ch] = arr.splice(from, 1);
+                    arr.splice(to, 0, ch);
+                }
+
+                return arr.join("");
+            }
+
+            function updateRateValue() {
+                const rate = document.getElementById("corruptionRate").value;
+                document.getElementById("rateValue").textContent = rate;
+            }
+
+            function corruptText() {
+                const inputText = document.getElementById("inputText").value;
+                const corruptionRate = parseInt(document.getElementById("corruptionRate").value);
+
+                if (!inputText.trim()) {
+                    alert("テキストを入力してください！");
+                    return;
+                }
+
+                const corruptedText = shuffleWithRate(inputText, corruptionRate);
+
+                // 改行を<br>タグに変換してHTMLとして表示
+                const htmlText = corruptedText.replace(/\n/g, "<br>");
+                document.getElementById("corruptedText").innerHTML = htmlText;
+                document.getElementById("result").style.display = "block";
+            }
+
+            function clearText() {
+                document.getElementById("inputText").value = "";
+                document.getElementById("result").style.display = "none";
+            }
+
+            function loadSampleText() {
+                const sampleText = `あああああああああああああああああああああああああああああああ\nドドドドドドドドドドドドドドドドドドドドドドドドドドドドドドド`;
+                document.getElementById("inputText").value = sampleText;
+            }
+        </script>
+    </body>
+</html>
