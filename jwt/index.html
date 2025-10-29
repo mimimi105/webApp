@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>JWT - WebApp Collection</title>
+
+        <!-- 共通スタイル -->
+        <link rel="stylesheet" href="../assets/styles/colors.css" />
+        <link rel="stylesheet" href="../assets/styles/common.css" />
+        <link rel="stylesheet" href="../assets/styles/util.css" />
+        <link rel="stylesheet" href="../assets/styles/component/alert.css" />
+        <link
+            rel="stylesheet"
+            href="../assets/styles/component/button-group.css"
+        />
+        <link rel="stylesheet" href="../assets/styles/component/card.css" />
+        <link rel="stylesheet" href="../assets/styles/component/result.css" />
+        <link rel="stylesheet" href="../assets/styles/component/tab.css" />
+
+        <style>
+            /* JWTアプリ固有のスタイル */
+            .jwt-section {
+                margin-bottom: 2rem;
+            }
+
+            .jwt-section h2 {
+                margin-bottom: 1rem;
+                color: var(--primary-color);
+            }
+
+            .algorithm-selector {
+                display: flex;
+                gap: 1rem;
+                margin-bottom: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .algorithm-selector label {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                cursor: pointer;
+            }
+
+            .json-editor {
+                font-family: "Courier New", monospace;
+                min-height: 200px;
+                resize: vertical;
+            }
+
+            .token-display {
+                word-break: break-all;
+                background-color: var(--bg-secondary);
+                padding: 1rem;
+                border-radius: 4px;
+                border: 1px solid var(--border-color);
+                font-family: "Courier New", monospace;
+                font-size: 0.9rem;
+                line-height: 1.4;
+            }
+
+            .expiry-info {
+                background-color: var(--bg-secondary);
+                padding: 1rem;
+                border-radius: 4px;
+                border-left: 4px solid var(--primary-color);
+                margin-top: 1rem;
+            }
+
+            .expiry-info.warning {
+                border-left-color: var(--warning-color);
+                background-color: #fff8e1;
+            }
+
+            .payload-display {
+                background-color: var(--bg-secondary);
+                padding: 1rem;
+                border-radius: 4px;
+                border: 1px solid var(--border-color);
+                font-family: "Courier New", monospace;
+                font-size: 0.9rem;
+                max-height: 300px;
+                overflow-y: auto;
+            }
+
+            .header-info {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            @media (max-width: 600px) {
+                .header-info {
+                    grid-template-columns: 1fr;
+                }
+
+                .algorithm-selector {
+                    flex-direction: column;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- 戻るリンクカード -->
+            <div class="card">
+                <a
+                    href="../index.html"
+                    style="color: var(--text-secondary); text-decoration: none"
+                >
+                    ← WebApp Collection に戻る
+                </a>
+            </div>
+
+            <div class="app-container">
+                <h1>JWT ツール</h1>
+                <p>JWT（JSON Web Token）の生成・解析ができるツールです。</p>
+
+                <!-- タブUI -->
+                <div class="tab-container">
+                    <div class="tab-buttons">
+                        <button
+                            class="tab-button active"
+                            onclick="switchTab('parse')"
+                        >
+                            解析
+                        </button>
+                        <button
+                            class="tab-button"
+                            onclick="switchTab('generate')"
+                        >
+                            生成
+                        </button>
+                    </div>
+
+                    <!-- JWT解析タブ -->
+                    <div id="parse-tab" class="tab-content active">
+                        <div class="jwt-section">
+                            <h2>JWT解析</h2>
+
+                            <textarea
+                                id="jwt-input"
+                                placeholder="JWTトークンを貼り付けてください..."
+                                rows="3"
+                            ></textarea>
+
+                            <div class="button-group">
+                                <button class="primary" onclick="parseJWT()">
+                                    解析
+                                </button>
+                                <button
+                                    class="secondary"
+                                    onclick="loadSampleJWT()"
+                                >
+                                    サンプル読み込み
+                                </button>
+                                <button
+                                    class="danger"
+                                    onclick="clearParseArea()"
+                                >
+                                    クリア
+                                </button>
+                            </div>
+
+                            <div class="results-container">
+                                <div class="result-section">
+                                    <h3>ヘッダー情報</h3>
+                                    <div
+                                        id="header-payload"
+                                        class="result-output"
+                                    >
+                                        <button
+                                            class="copy-button"
+                                            onclick="copyToClipboard('header-payload')"
+                                        >
+                                            コピー
+                                        </button>
+                                        ここにヘッダー情報が表示されます...
+                                    </div>
+                                </div>
+
+                                <div class="result-section">
+                                    <h3>ペイロード情報</h3>
+                                    <div
+                                        id="payload-display"
+                                        class="result-output"
+                                    >
+                                        <button
+                                            class="copy-button"
+                                            onclick="copyToClipboard('payload-display')"
+                                        >
+                                            コピー
+                                        </button>
+                                        ここにペイロード情報が表示されます...
+                                    </div>
+                                </div>
+
+                                <div class="result-section">
+                                    <h3>有効期限情報</h3>
+                                    <div id="expiry-info" class="expiry-info">
+                                        <div id="expiry-status">
+                                            有効期限情報が表示されます...
+                                        </div>
+                                        <div id="expiry-details"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JWT生成タブ -->
+                    <div id="generate-tab" class="tab-content">
+                        <div class="jwt-section">
+                            <h2>JWT生成</h2>
+
+                            <label for="payload-input"
+                                >ペイロード (JSON):</label
+                            >
+                            <textarea
+                                id="payload-input"
+                                class="json-editor"
+                                placeholder='{"userId": 123, "role": "admin", "exp": 1735689600}'
+                            ></textarea>
+
+                            <div class="algorithm-selector">
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="algorithm"
+                                        value="HS256"
+                                        checked
+                                    />
+                                    HS256
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="algorithm"
+                                        value="HS384"
+                                    />
+                                    HS384
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="algorithm"
+                                        value="HS512"
+                                    />
+                                    HS512
+                                </label>
+                            </div>
+
+                            <label for="secret-input">シークレット:</label>
+                            <input
+                                type="text"
+                                id="secret-input"
+                                placeholder="my-secret-key"
+                            />
+
+                            <div class="button-group">
+                                <button class="primary" onclick="generateJWT()">
+                                    生成
+                                </button>
+                                <button
+                                    class="secondary"
+                                    onclick="loadSamplePayload()"
+                                >
+                                    サンプル読み込み
+                                </button>
+                                <button
+                                    class="danger"
+                                    onclick="clearGenerateArea()"
+                                >
+                                    クリア
+                                </button>
+                            </div>
+
+                            <div class="results-container">
+                                <div class="result-section">
+                                    <h3>生成されたJWT</h3>
+                                    <div
+                                        id="generated-token"
+                                        class="result-output"
+                                    >
+                                        <button
+                                            class="copy-button"
+                                            onclick="copyToClipboard('generated-token')"
+                                        >
+                                            コピー
+                                        </button>
+                                        ここに生成されたJWTが表示されます...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 共通スクリプト -->
+        <script src="../assets/logic/common.js"></script>
+        <script src="../assets/logic/time-utils.js"></script>
+
+        <!-- JWTアプリ固有のスクリプト -->
+        <script>
+            // JWTライブラリの読み込み状態
+            let jwtLibraryLoaded = false;
+            let countdownInterval = null;
+
+            // JWTライブラリの読み込み確認
+            function checkJWTLibrary() {
+                if (!jwtLibraryLoaded || typeof window.JWT === "undefined") {
+                    console.error("JWT library is not loaded");
+                    showAlert(
+                        "JWTライブラリが読み込まれていません。ページを再読み込みしてください。",
+                        "error",
+                    );
+                    return false;
+                }
+                return true;
+            }
+
+            // JWTライブラリ読み込み成功時のコールバック
+            function onJWTLibraryLoaded() {
+                jwtLibraryLoaded = true;
+                console.log("JWT library loaded successfully");
+            }
+
+            // JWTライブラリ読み込み失敗時のコールバック
+            function onJWTLibraryError() {
+                jwtLibraryLoaded = false;
+                console.error("JWT library failed to load");
+                showAlert(
+                    "JWTライブラリの読み込みに失敗しました。ページを再読み込みしてください。",
+                    "error",
+                );
+            }
+
+            // サンプルJWT（有効期限: 2025-01-01）
+            const sampleJWT =
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyMywicm9sZSI6ImFkbWluIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNzM1Njg5NjAwLCJleHAiOjE3MzU2ODk2MDB9.example";
+
+            // サンプルペイロード
+            const samplePayload = {
+                userId: 123,
+                role: "admin",
+                name: "John Doe",
+                iat: getCurrentTimestamp(),
+                exp: getFutureTimestamp(3600), // 1時間後
+            };
+
+            function parseJWT() {
+                const token = document.getElementById("jwt-input").value.trim();
+
+                if (!token) {
+                    showAlert("JWTトークンを入力してください。", "error");
+                    return;
+                }
+
+                if (!checkJWTLibrary()) {
+                    return;
+                }
+
+                try {
+                    // 署名なしで解析
+                    const decoded = window.JWT.decode(token, null, true);
+
+                    console.log("Decoded JWT:", decoded);
+
+                    showAlert("JWTの解析が完了しました。", "success");
+
+                    displayHeaderInfo(decoded);
+                    displayPayload(decoded);
+                    displayExpiryInfo(decoded);
+                } catch (error) {
+                    showAlert(`解析エラー: ${error.message}`, "error");
+                }
+            }
+
+            function displayHeaderInfo(decoded) {
+                const headerPayload = document.getElementById("header-payload");
+
+                console.log("Displaying header info for:", decoded);
+
+                // このJWTライブラリは署名なし解析でヘッダー情報を返さない
+                // 代わりに一般的なJWTヘッダー情報を表示
+                const defaultHeader = {
+                    alg: "HS256",
+                    typ: "JWT",
+                };
+
+                // プレースホルダーテキストを削除してJSONを表示
+                const button = headerPayload.querySelector(".copy-button");
+                headerPayload.innerHTML = JSON.stringify(
+                    defaultHeader,
+                    null,
+                    2,
+                );
+                headerPayload.appendChild(button); // コピーボタンを再追加
+                headerPayload.classList.add("has-content");
+            }
+
+            function displayPayload(decoded) {
+                const payloadDisplay =
+                    document.getElementById("payload-display");
+
+                console.log("Displaying payload for:", decoded);
+
+                // このJWTライブラリは署名なし解析でペイロードのみを返す
+                const button = payloadDisplay.querySelector(".copy-button");
+                payloadDisplay.innerHTML = JSON.stringify(decoded, null, 2);
+                payloadDisplay.appendChild(button); // コピーボタンを再追加
+                payloadDisplay.classList.add("has-content");
+            }
+
+            function displayExpiryInfo(decoded) {
+                const expiryInfo = document.getElementById("expiry-info");
+                const expiryStatus = document.getElementById("expiry-status");
+                const expiryDetails = document.getElementById("expiry-details");
+
+                console.log("Displaying expiry info for:", decoded);
+
+                // 既存のカウントダウンを停止
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                }
+
+                // このJWTライブラリは署名なし解析でペイロードのみを返す
+                if (decoded.exp) {
+                    const exp = decoded.exp;
+                    const formattedTime = formatTimestamp(exp);
+
+                    // カウントダウン開始
+                    startCountdown(
+                        exp,
+                        expiryStatus,
+                        expiryDetails,
+                        expiryInfo,
+                    );
+
+                    expiryDetails.innerHTML = `詳細: ${formattedTime} (${exp})`;
+                } else {
+                    console.log("No expiry info found in decoded JWT");
+                    expiryStatus.innerHTML = `<strong>有効期限情報なし</strong>`;
+                    expiryDetails.innerHTML = `このJWTには有効期限（exp）が設定されていません`;
+                    expiryInfo.classList.remove("alert", "error", "warning");
+                }
+            }
+
+            function startCountdown(
+                exp,
+                statusElement,
+                detailsElement,
+                infoElement,
+            ) {
+                function updateCountdown() {
+                    const now = getCurrentTimestamp();
+                    const diff = exp - now;
+
+                    if (diff <= 0) {
+                        // 期限切れ後のカウントアップ表示
+                        const expiredTimeDiff = getTimeDifference(
+                            now - Math.abs(diff),
+                            true,
+                        ); // 現在時刻から期限切れ時刻までの経過時間
+                        statusElement.innerHTML = `<strong>有効期限: ${expiredTimeDiff}前</strong>`;
+                        infoElement.classList.remove("warning");
+                        infoElement.classList.add("alert", "error");
+                        // カウントアップは継続する（clearIntervalしない）
+                        return;
+                    }
+
+                    const timeDiff = getTimeDifference(exp);
+                    statusElement.innerHTML = `<strong>有効期限: ${timeDiff}</strong>`;
+
+                    // スタイル更新
+                    if (diff < 3600) {
+                        // 1時間以内
+                        infoElement.classList.add("warning");
+                        infoElement.classList.remove("alert", "error");
+                    } else {
+                        infoElement.classList.remove(
+                            "alert",
+                            "error",
+                            "warning",
+                        );
+                    }
+                }
+
+                // 即座に更新
+                updateCountdown();
+
+                // 1秒ごとに更新
+                countdownInterval = setInterval(updateCountdown, 1000);
+            }
+
+            function generateJWT() {
+                const payloadText = document
+                    .getElementById("payload-input")
+                    .value.trim();
+                const secret = document
+                    .getElementById("secret-input")
+                    .value.trim();
+                const algorithm = document.querySelector(
+                    'input[name="algorithm"]:checked',
+                ).value;
+
+                if (!payloadText) {
+                    showAlert("ペイロードを入力してください。", "error");
+                    return;
+                }
+
+                if (!secret) {
+                    showAlert("シークレットを入力してください。", "error");
+                    return;
+                }
+
+                if (!checkJWTLibrary()) {
+                    return;
+                }
+
+                try {
+                    const payload = JSON.parse(payloadText);
+                    const token = window.JWT.encode(payload, secret, algorithm);
+
+                    const generatedTokenElement =
+                        document.getElementById("generated-token");
+                    const button =
+                        generatedTokenElement.querySelector(".copy-button");
+                    generatedTokenElement.innerHTML = token;
+                    generatedTokenElement.appendChild(button); // コピーボタンを再追加
+                    generatedTokenElement.classList.add("has-content");
+
+                    showAlert("JWTの生成が完了しました。", "success");
+                } catch (error) {
+                    if (error instanceof SyntaxError) {
+                        showAlert(
+                            "ペイロードのJSON形式が正しくありません。",
+                            "error",
+                        );
+                    } else {
+                        showAlert(`生成エラー: ${error.message}`, "error");
+                    }
+                }
+            }
+
+            function loadSampleJWT() {
+                document.getElementById("jwt-input").value = sampleJWT;
+            }
+
+            function loadSamplePayload() {
+                document.getElementById("payload-input").value = JSON.stringify(
+                    samplePayload,
+                    null,
+                    2,
+                );
+            }
+
+            function clearParseArea() {
+                document.getElementById("jwt-input").value = "";
+
+                // プレースホルダーテキストに戻す
+                const headerPayload = document.getElementById("header-payload");
+                const headerButton =
+                    headerPayload.querySelector(".copy-button");
+                headerPayload.innerHTML = "ここにヘッダー情報が表示されます...";
+                headerPayload.appendChild(headerButton); // コピーボタンを再追加
+                headerPayload.classList.remove("has-content");
+
+                const payloadDisplay =
+                    document.getElementById("payload-display");
+                const payloadButton =
+                    payloadDisplay.querySelector(".copy-button");
+                payloadDisplay.innerHTML =
+                    "ここにペイロード情報が表示されます...";
+                payloadDisplay.appendChild(payloadButton); // コピーボタンを再追加
+                payloadDisplay.classList.remove("has-content");
+
+                document.getElementById("expiry-status").textContent =
+                    "有効期限情報が表示されます...";
+                document.getElementById("expiry-details").textContent = "";
+
+                // カウントダウンを停止
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                }
+            }
+
+            function clearGenerateArea() {
+                document.getElementById("payload-input").value = "";
+                document.getElementById("secret-input").value = "";
+                document.querySelector(
+                    'input[name="algorithm"][value="HS256"]',
+                ).checked = true;
+
+                // プレースホルダーテキストに戻す
+                const generatedTokenElement =
+                    document.getElementById("generated-token");
+                const tokenButton =
+                    generatedTokenElement.querySelector(".copy-button");
+                generatedTokenElement.innerHTML =
+                    "ここに生成されたJWTが表示されます...";
+                generatedTokenElement.appendChild(tokenButton); // コピーボタンを再追加
+                generatedTokenElement.classList.remove("has-content");
+            }
+
+            // コピー機能
+            function copyToClipboard(elementId) {
+                const element = document.getElementById(elementId);
+                const button = element.querySelector(".copy-button");
+
+                // プレースホルダーテキストかどうかをチェック
+                const placeholderTexts = [
+                    "ここにヘッダー情報が表示されます...",
+                    "ここにペイロード情報が表示されます...",
+                    "ここに生成されたJWTが表示されます...",
+                    "有効期限情報が表示されます...",
+                ];
+
+                const text = element.textContent.trim();
+                const isPlaceholder = placeholderTexts.some((placeholder) =>
+                    text.includes(placeholder),
+                );
+
+                if (isPlaceholder) {
+                    showAlert("コピーするデータがありません。", "warning");
+                    return;
+                }
+
+                // コピーボタンのテキストを除外してコピー
+                const textWithoutButton = text
+                    .replace(button.textContent.trim(), "")
+                    .trim();
+
+                navigator.clipboard
+                    .writeText(textWithoutButton)
+                    .then(() => {
+                        const originalText = button.textContent;
+                        button.textContent = "✓ コピー済み";
+                        button.classList.add("copied");
+
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                            button.classList.remove("copied");
+                        }, 2000);
+                    })
+                    .catch((err) => {
+                        console.error("コピーに失敗しました:", err);
+                        showAlert("コピーに失敗しました。", "error");
+                    });
+            }
+
+            // タブ切り替え機能
+            function switchTab(tabName) {
+                // すべてのタブボタンからactiveクラスを削除
+                document.querySelectorAll(".tab-button").forEach((button) => {
+                    button.classList.remove("active");
+                });
+
+                // すべてのタブコンテンツからactiveクラスを削除
+                document.querySelectorAll(".tab-content").forEach((content) => {
+                    content.classList.remove("active");
+                });
+
+                // 選択されたタブボタンにactiveクラスを追加
+                event.target.classList.add("active");
+
+                // 選択されたタブコンテンツにactiveクラスを追加
+                document
+                    .getElementById(tabName + "-tab")
+                    .classList.add("active");
+            }
+
+            // ページ読み込み時にサンプルを表示
+            document.addEventListener("DOMContentLoaded", function () {
+                loadSamplePayload();
+            });
+        </script>
+
+        <!-- JWTライブラリの読み込み（関数定義後に実行） -->
+        <script
+            src="../assets/package/jwt.js"
+            onload="onJWTLibraryLoaded()"
+            onerror="onJWTLibraryError()"
+        ></script>
+    </body>
+</html>

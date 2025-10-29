@@ -8,6 +8,6 @@ window.crypto = crypto;
 window.Transform = Transform;
 
 window.JWT = {
-  encode: jwt.encode,
-  decode: jwt.decode
+    encode: jwt.encode,
+    decode: jwt.decode,
 };

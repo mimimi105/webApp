@@ -6,10 +6,10 @@
  * @returns {string} フォーマットされた日付文字列
  */
 function formatDate(date) {
-    return new Date(date).toLocaleDateString('ja-JP', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+    return new Date(date).toLocaleDateString("ja-JP", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
     });
 }
 
@@ -38,7 +38,7 @@ function debounce(func, wait) {
 function showElement(id) {
     const element = document.getElementById(id);
     if (element) {
-        element.style.display = 'block';
+        element.style.display = "block";
     }
 }
 
@@ -49,7 +49,7 @@ function showElement(id) {
 function hideElement(id) {
     const element = document.getElementById(id);
     if (element) {
-        element.style.display = 'none';
+        element.style.display = "none";
     }
 }
 
@@ -82,12 +82,12 @@ function setHTMLContent(id, html) {
  * @param {string} message - 表示するメッセージ
  * @param {string} type - アラートのタイプ (success, warning, error, info)
  */
-function showAlert(message, type = 'info') {
-    const alertDiv = document.createElement('div');
+function showAlert(message, type = "info") {
+    const alertDiv = document.createElement("div");
     alertDiv.className = `alert ${type}`;
     alertDiv.textContent = message;
 
-    const container = document.querySelector('.app-container');
+    const container = document.querySelector(".app-container");
     if (container) {
         container.insertBefore(alertDiv, container.firstChild);
 
@@ -107,7 +107,7 @@ function saveToStorage(key, data) {
     try {
         localStorage.setItem(key, JSON.stringify(data));
     } catch (error) {
-        console.error('Failed to save to localStorage:', error);
+        console.error("Failed to save to localStorage:", error);
     }
 }
 
@@ -122,7 +122,7 @@ function loadFromStorage(key, defaultValue = null) {
         const data = localStorage.getItem(key);
         return data ? JSON.parse(data) : defaultValue;
     } catch (error) {
-        console.error('Failed to load from localStorage:', error);
+        console.error("Failed to load from localStorage:", error);
         return defaultValue;
     }
 }
@@ -133,8 +133,9 @@ function loadFromStorage(key, defaultValue = null) {
  * @returns {string} ランダムなID
  */
 function generateId(length = 8) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
+    const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
     for (let i = 0; i < length; i++) {
         result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
@@ -151,7 +152,7 @@ async function copyToClipboard(text) {
         await navigator.clipboard.writeText(text);
         return true;
     } catch (error) {
-        console.error('Failed to copy to clipboard:', error);
+        console.error("Failed to copy to clipboard:", error);
         return false;
     }
 }

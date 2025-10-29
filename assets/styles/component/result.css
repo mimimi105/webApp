@@ -27,6 +27,7 @@
     word-wrap: break-word;
     overflow-x: auto;
     white-space: normal; /* プレースホルダー時は初期値 */
+    position: relative; /* コピーボタンの基準点 */
 }
 
 .result-output.has-content {
@@ -39,14 +40,32 @@
     top: 8px;
     right: 8px;
     background: var(--bg-primary);
-    border: 1px solid var(--primary-color);
     border-radius: 4px;
-    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    padding: 0 14px;
+    padding-top: 2px;
     font-size: 0.8rem;
     color: var(--text-secondary);
     cursor: pointer;
     transition: all 0.2s ease;
     z-index: 10;
+    opacity: 1;
+    user-select: none; /* コピーボタン自体をコピー対象から除外 */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    white-space: normal;
+}
+
+.copy-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-tertiary);
 }
 
 .copy-button:hover {
@@ -58,17 +77,4 @@
     background: var(--success-color);
     color: white;
     border-color: var(--success-color);
-}
-
-.result-output {
-    position: relative;
-}
-
-.result-output:hover .copy-button {
-    opacity: 1;
-}
-
-.copy-button {
-    opacity: 0;
-    transition: opacity 0.2s ease;
 }

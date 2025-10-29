@@ -8,6 +8,15 @@
         <!-- 共通スタイル -->
         <link rel="stylesheet" href="../assets/styles/colors.css" />
         <link rel="stylesheet" href="../assets/styles/common.css" />
+        <link rel="stylesheet" href="../assets/styles/util.css" />
+        <link rel="stylesheet" href="../assets/styles/component/alert.css" />
+        <link
+            rel="stylesheet"
+            href="../assets/styles/component/button-group.css"
+        />
+        <link rel="stylesheet" href="../assets/styles/component/card.css" />
+        <link rel="stylesheet" href="../assets/styles/component/result.css" />
+        <link rel="stylesheet" href="../assets/styles/component/tab.css" />
 
         <!-- アプリ固有のスタイル -->
         <style>
@@ -106,37 +115,78 @@
     </head>
     <body>
         <div class="container">
+            <!-- 戻るリンクカード -->
+            <div class="card">
+                <a
+                    href="../index.html"
+                    style="color: var(--text-secondary); text-decoration: none"
+                >
+                    ← WebApp Collection に戻る
+                </a>
+            </div>
+
             <div class="app-container">
                 <h1>テキスト差分表示</h1>
-                <p>2つのテキストの差分を視覚的に表示し、変更内容を確認できます。</p>
+                <p>
+                    2つのテキストの差分を視覚的に表示し、変更内容を確認できます。
+                </p>
 
                 <div class="diff-container">
                     <div class="text-input-section">
                         <label for="textA">テキストA（元のテキスト）</label>
-                        <textarea id="textA" placeholder="テキストAを入力してください..."></textarea>
+                        <textarea
+                            id="textA"
+                            placeholder="テキストAを入力してください..."
+                        ></textarea>
                     </div>
 
                     <div class="text-input-section">
                         <label for="textB">テキストB（変更後のテキスト）</label>
-                        <textarea id="textB" placeholder="テキストBを入力してください..."></textarea>
+                        <textarea
+                            id="textB"
+                            placeholder="テキストBを入力してください..."
+                        ></textarea>
                     </div>
                 </div>
 
                 <div class="button-group">
-                    <button id="showDiffButton">差分を表示</button>
-                    <button id="loadSampleButton" class="secondary">サンプルを読み込み</button>
+                    <button id="showDiffButton" class="primary">
+                        差分を表示
+                    </button>
+                    <button id="loadSampleButton" class="secondary">
+                        サンプルを読み込み
+                    </button>
                     <button id="clearButton" class="danger">クリア</button>
                 </div>
 
                 <div class="results-container">
                     <div class="result-section">
                         <h3>差分表示</h3>
-                        <div id="diffOutput" class="result-output diff-output">ここに差分が表示されます...</div>
+                        <div id="diffOutput" class="result-output diff-output">
+                            <button
+                                class="copy-button"
+                                onclick="copyToClipboard('diffOutput')"
+                            >
+                                📋 コピー
+                            </button>
+                            ここに差分が表示されます...
+                        </div>
                     </div>
 
                     <div class="result-section">
                         <h3>差分を組み合わせてもとのテキストを再構築</h3>
-                        <div id="rebuiltText" class="result-output rebuilt-text">ここに再構築されたテキストが表示されます...</div>
+                        <div
+                            id="rebuiltText"
+                            class="result-output rebuilt-text"
+                        >
+                            <button
+                                class="copy-button"
+                                onclick="copyToClipboard('rebuiltText')"
+                            >
+                                📋 コピー
+                            </button>
+                            ここに再構築されたテキストが表示されます...
+                        </div>
                     </div>
                 </div>
             </div>
@@ -150,7 +200,8 @@
             const textAInput = document.getElementById("textA");
             const textBInput = document.getElementById("textB");
             const showDiffButton = document.getElementById("showDiffButton");
-            const loadSampleButton = document.getElementById("loadSampleButton");
+            const loadSampleButton =
+                document.getElementById("loadSampleButton");
             const clearButton = document.getElementById("clearButton");
             const output = document.getElementById("diffOutput");
             const rebuiltText = document.getElementById("rebuiltText");
@@ -205,7 +256,8 @@ func main() {
 
                 if (!textA.trim() && !textB.trim()) {
                     output.innerHTML = "テキストを入力してください。";
-                    rebuiltText.innerHTML = "ここに再構築されたテキストが表示されます...";
+                    rebuiltText.innerHTML =
+                        "ここに再構築されたテキストが表示されます...";
                     return;
                 }
 
@@ -214,6 +266,7 @@ func main() {
                 dmp.diff_cleanupSemantic(diffs);
 
                 // 差分表示
+                const outputButton = output.querySelector(".copy-button");
                 output.innerHTML = "";
                 diffs.forEach((diff) => {
                     const span = document.createElement("span");
@@ -224,9 +277,14 @@ func main() {
                         // 削除
                         span.className = "removed";
                     }
-                    span.innerHTML = diff[1].replace(/\n/g, "<br>").replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;").replace(/ /g, "&nbsp;");
+                    span.innerHTML = diff[1]
+                        .replace(/\n/g, "<br>")
+                        .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
+                        .replace(/ /g, "&nbsp;");
                     output.appendChild(span);
                 });
+                output.appendChild(outputButton); // コピーボタンを再追加
+                output.classList.add("has-content");
 
                 // テキスト再構築
                 let rebuiltTextContent = "";
@@ -238,7 +296,13 @@ func main() {
                     // 削除（diff[0] === -1）は再構築テキストに含めない
                 });
 
-                rebuiltText.innerHTML = rebuiltTextContent.replace(/\n/g, "<br>").replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;").replace(/ /g, "&nbsp;");
+                const rebuiltButton = rebuiltText.querySelector(".copy-button");
+                rebuiltText.innerHTML = rebuiltTextContent
+                    .replace(/\n/g, "<br>")
+                    .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
+                    .replace(/ /g, "&nbsp;");
+                rebuiltText.appendChild(rebuiltButton); // コピーボタンを再追加
+                rebuiltText.classList.add("has-content");
 
                 // 比較結果を表示
                 const comparisonResult = document.createElement("div");
@@ -246,15 +310,20 @@ func main() {
 
                 if (rebuiltTextContent === textB) {
                     comparisonResult.className += " match";
-                    comparisonResult.textContent = "✅ 再構築されたテキストは入力Bと一致しています";
+                    comparisonResult.textContent =
+                        "✅ 再構築されたテキストは入力Bと一致しています";
                 } else {
                     comparisonResult.className += " mismatch";
-                    comparisonResult.textContent = "❌ 再構築されたテキストは入力Bと一致していません";
+                    comparisonResult.textContent =
+                        "❌ 再構築されたテキストは入力Bと一致していません";
                 }
 
                 // 既存の比較結果があれば削除
                 const existingResult = rebuiltText.nextElementSibling;
-                if (existingResult && existingResult.className.includes("comparison-result")) {
+                if (
+                    existingResult &&
+                    existingResult.className.includes("comparison-result")
+                ) {
                     existingResult.remove();
                 }
 
@@ -269,14 +338,70 @@ func main() {
             function clearAll() {
                 textAInput.value = "";
                 textBInput.value = "";
+
+                const outputButton = output.querySelector(".copy-button");
                 output.innerHTML = "ここに差分が表示されます...";
-                rebuiltText.innerHTML = "ここに再構築されたテキストが表示されます...";
+                output.appendChild(outputButton); // コピーボタンを再追加
+                output.classList.remove("has-content");
+
+                const rebuiltButton = rebuiltText.querySelector(".copy-button");
+                rebuiltText.innerHTML =
+                    "ここに再構築されたテキストが表示されます...";
+                rebuiltText.appendChild(rebuiltButton); // コピーボタンを再追加
+                rebuiltText.classList.remove("has-content");
 
                 // 比較結果を削除
                 const existingResult = rebuiltText.nextElementSibling;
-                if (existingResult && existingResult.className.includes("comparison-result")) {
+                if (
+                    existingResult &&
+                    existingResult.className.includes("comparison-result")
+                ) {
                     existingResult.remove();
                 }
+            }
+
+            // コピー機能
+            function copyToClipboard(elementId) {
+                const element = document.getElementById(elementId);
+                const button = element.querySelector(".copy-button");
+
+                // プレースホルダーテキストかどうかをチェック
+                const placeholderTexts = [
+                    "ここに差分が表示されます...",
+                    "ここに再構築されたテキストが表示されます...",
+                ];
+
+                const text = element.textContent.trim();
+                const isPlaceholder = placeholderTexts.some((placeholder) =>
+                    text.includes(placeholder),
+                );
+
+                if (isPlaceholder) {
+                    alert("コピーするデータがありません。");
+                    return;
+                }
+
+                // コピーボタンのテキストを除外してコピー
+                const textWithoutButton = text
+                    .replace(button.textContent.trim(), "")
+                    .trim();
+
+                navigator.clipboard
+                    .writeText(textWithoutButton)
+                    .then(() => {
+                        const originalText = button.textContent;
+                        button.textContent = "✓ コピー済み";
+                        button.classList.add("copied");
+
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                            button.classList.remove("copied");
+                        }, 2000);
+                    })
+                    .catch((err) => {
+                        console.error("コピーに失敗しました:", err);
+                        alert("コピーに失敗しました。");
+                    });
             }
 
             // イベントリスナー

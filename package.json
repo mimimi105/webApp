@@ -1,31 +1,31 @@
 {
-  "name": "webapp.string_corruption",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mimimi105/webApp.string_corruption.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/mimimi105/webApp.string_corruption/issues"
-  },
-  "homepage": "https://github.com/mimimi105/webApp.string_corruption#readme",
-  "dependencies": {
-    "buffer": "^6.0.3",
-    "crypto-browserify": "^3.12.1",
-    "esbuild": "^0.25.11",
-    "jwt-simple": "^0.5.6",
-    "path-browserify": "^1.0.1",
-    "prettier": "^3.6.2",
-    "process": "^0.11.10",
-    "stream-browserify": "^3.0.0"
-  }
+    "name": "webapp.string_corruption",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mimimi105/webApp.string_corruption.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/mimimi105/webApp.string_corruption/issues"
+    },
+    "homepage": "https://github.com/mimimi105/webApp.string_corruption#readme",
+    "dependencies": {
+        "buffer": "^6.0.3",
+        "crypto-browserify": "^3.12.1",
+        "esbuild": "^0.25.11",
+        "jwt-simple": "^0.5.6",
+        "path-browserify": "^1.0.1",
+        "prettier": "^3.6.2",
+        "process": "^0.11.10",
+        "stream-browserify": "^3.0.0"
+    }
 }

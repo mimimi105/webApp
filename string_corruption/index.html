@@ -8,6 +8,15 @@
         <!-- 共通スタイル -->
         <link rel="stylesheet" href="../assets/styles/colors.css" />
         <link rel="stylesheet" href="../assets/styles/common.css" />
+        <link rel="stylesheet" href="../assets/styles/util.css" />
+        <link rel="stylesheet" href="../assets/styles/component/alert.css" />
+        <link
+            rel="stylesheet"
+            href="../assets/styles/component/button-group.css"
+        />
+        <link rel="stylesheet" href="../assets/styles/component/card.css" />
+        <link rel="stylesheet" href="../assets/styles/component/result.css" />
+        <link rel="stylesheet" href="../assets/styles/component/tab.css" />
 
         <!-- アプリ固有のスタイル -->
         <style>
@@ -67,31 +76,62 @@
         <div class="container">
             <!-- 戻るリンクカード -->
             <div class="card">
-                <a href="../index.html" style="color: var(--text-secondary); text-decoration: none"> ← WebApp Collection に戻る </a>
+                <a
+                    href="../index.html"
+                    style="color: var(--text-secondary); text-decoration: none"
+                >
+                    ← WebApp Collection に戻る
+                </a>
             </div>
 
             <div class="app-container">
                 <h1>文字列破損ツール</h1>
 
-                <div class="sample-text">文字列を破損率に応じてランダムに順番を入れかえ、破損させることができます。</div>
-
-                <div class="corruption-controls">
-                    <label for="corruptionRate">破損率: <span id="rateValue">25</span>%</label>
-                    <input type="range" id="corruptionRate" min="1" max="100" value="25" oninput="updateRateValue()" />
+                <div class="sample-text">
+                    文字列を破損率に応じてランダムに順番を入れかえ、破損させることができます。
                 </div>
 
-                <textarea id="inputText" placeholder="ここにテキストを入力してください..."></textarea>
+                <div class="corruption-controls">
+                    <label for="corruptionRate"
+                        >破損率: <span id="rateValue">25</span>%</label
+                    >
+                    <input
+                        type="range"
+                        id="corruptionRate"
+                        min="1"
+                        max="100"
+                        value="25"
+                        oninput="updateRateValue()"
+                    />
+                </div>
+
+                <textarea
+                    id="inputText"
+                    placeholder="ここにテキストを入力してください..."
+                ></textarea>
 
                 <div class="button-group">
-                    <button onclick="corruptText()">文字列を破損させる</button>
-                    <button onclick="loadSampleText()" class="secondary">サンプルテキストを入力</button>
+                    <button class="primary" onclick="corruptText()">
+                        文字列を破損させる
+                    </button>
+                    <button onclick="loadSampleText()" class="secondary">
+                        サンプルテキストを入力
+                    </button>
                     <button onclick="clearText()" class="danger">クリア</button>
                 </div>
 
                 <div class="results-container">
                     <div class="result-section">
                         <h3>破損されたテキスト</h3>
-                        <div id="corruptedText" class="result-output">ここに破損されたテキストが表示されます...</div>
+                        <div id="corruptedText" class="result-output">
+                            <button
+                                class="copy-button"
+                                onclick="copyToClipboard('corruptedText')"
+                            >
+                                コピー
+                            </button>
+                            ここに破損されたテキストが表示されます...
+                        </div>
                     </div>
                 </div>
             </div>
@@ -104,7 +144,10 @@
         <script>
             function shuffleWithRate(str, corruptionRate) {
                 const arr = Array.from(str);
-                const moveCount = Math.max(1, Math.floor(arr.length * (corruptionRate / 100)));
+                const moveCount = Math.max(
+                    1,
+                    Math.floor(arr.length * (corruptionRate / 100)),
+                );
 
                 for (let i = 0; i < moveCount; i++) {
                     const from = Math.floor(Math.random() * arr.length);
@@ -123,28 +166,89 @@
 
             function corruptText() {
                 const inputText = document.getElementById("inputText").value;
-                const corruptionRate = parseInt(document.getElementById("corruptionRate").value);
+                const corruptionRate = parseInt(
+                    document.getElementById("corruptionRate").value,
+                );
 
                 if (!inputText.trim()) {
                     showAlert("テキストを入力してください！", "warning");
                     return;
                 }
 
-                const corruptedText = shuffleWithRate(inputText, corruptionRate);
+                const corruptedText = shuffleWithRate(
+                    inputText,
+                    corruptionRate,
+                );
 
                 // 改行を<br>タグに変換してHTMLとして表示
+                const corruptedTextElement =
+                    document.getElementById("corruptedText");
+                const button =
+                    corruptedTextElement.querySelector(".copy-button");
                 const htmlText = corruptedText.replace(/\n/g, "<br>");
-                document.getElementById("corruptedText").innerHTML = htmlText;
+                corruptedTextElement.innerHTML = htmlText;
+                corruptedTextElement.appendChild(button); // コピーボタンを再追加
+                corruptedTextElement.classList.add("has-content");
             }
 
             function clearText() {
                 document.getElementById("inputText").value = "";
-                document.getElementById("corruptedText").innerHTML = "ここに破損されたテキストが表示されます...";
+                const corruptedTextElement =
+                    document.getElementById("corruptedText");
+                const button =
+                    corruptedTextElement.querySelector(".copy-button");
+                corruptedTextElement.innerHTML =
+                    "ここに破損されたテキストが表示されます...";
+                corruptedTextElement.appendChild(button); // コピーボタンを再追加
+                corruptedTextElement.classList.remove("has-content");
             }
 
             function loadSampleText() {
                 const sampleText = `あああああああああああああああああああああああああ\nドドドドドドドドドドドドドドドドドドドドドドドドド`;
                 document.getElementById("inputText").value = sampleText;
+            }
+
+            // コピー機能
+            function copyToClipboard(elementId) {
+                const element = document.getElementById(elementId);
+                const button = element.querySelector(".copy-button");
+
+                // プレースホルダーテキストかどうかをチェック
+                const placeholderTexts = [
+                    "ここに破損されたテキストが表示されます...",
+                ];
+
+                const text = element.textContent.trim();
+                const isPlaceholder = placeholderTexts.some((placeholder) =>
+                    text.includes(placeholder),
+                );
+
+                if (isPlaceholder) {
+                    alert("コピーするデータがありません。");
+                    return;
+                }
+
+                // コピーボタンのテキストを除外してコピー
+                const textWithoutButton = text
+                    .replace(button.textContent.trim(), "")
+                    .trim();
+
+                navigator.clipboard
+                    .writeText(textWithoutButton)
+                    .then(() => {
+                        const originalText = button.textContent;
+                        button.textContent = "✓ コピー済み";
+                        button.classList.add("copied");
+
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                            button.classList.remove("copied");
+                        }, 2000);
+                    })
+                    .catch((err) => {
+                        console.error("コピーに失敗しました:", err);
+                        alert("コピーに失敗しました。");
+                    });
             }
         </script>
     </body>

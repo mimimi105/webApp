@@ -25,6 +25,16 @@
     </head>
     <body>
         <div class="container">
+            <!-- 戻るリンクカード -->
+            <div class="card">
+                <a
+                    href="../index.html"
+                    style="color: var(--text-secondary); text-decoration: none"
+                >
+                    ← WebApp Collection に戻る
+                </a>
+            </div>
+
             <div class="app-container">
                 <h1>アプリ名</h1>
 
@@ -128,12 +138,25 @@
 <div class="results-container">
     <div class="result-section">
         <h3>結果タイトル</h3>
-        <div class="result-output">結果の内容</div>
+        <div class="result-output">
+            <button class="copy-button" onclick="copyToClipboard('result-id')">
+                コピー
+            </button>
+            ここに結果が表示されます...
+        </div>
     </div>
 
     <div class="result-section">
         <h3>別の結果タイトル</h3>
-        <div class="result-output">別の結果の内容</div>
+        <div class="result-output">
+            <button
+                class="copy-button"
+                onclick="copyToClipboard('result-id-2')"
+            >
+                コピー
+            </button>
+            ここに別の結果が表示されます...
+        </div>
     </div>
 </div>
 ```
@@ -144,6 +167,60 @@
 - **`.result-section`**: 各結果セクション間に20pxの間隔
 - **`.result-output`**: 結果表示エリア（背景、ボーダー、等幅フォント）
 - **常時表示**: 結果がない場合でも要素は表示し、プレースホルダーテキストを表示する
+- **プレースホルダー**: 「ここに○○が表示されます...」のような説明テキストを表示
+- **コピーボタン**: 各結果エリアにコピーボタンを配置（ホバー時に表示）
+
+#### タブUI
+
+```html
+<!-- タブコンテナ -->
+<div class="tab-container">
+    <div class="tab-buttons">
+        <button class="tab-button active" onclick="switchTab('tab1')">
+            タブ1
+        </button>
+        <button class="tab-button" onclick="switchTab('tab2')">タブ2</button>
+    </div>
+
+    <div id="tab1-tab" class="tab-content active">
+        <!-- タブ1のコンテンツ -->
+    </div>
+
+    <div id="tab2-tab" class="tab-content">
+        <!-- タブ2のコンテンツ -->
+    </div>
+</div>
+```
+
+**タブUIの仕様:**
+
+- **`.tab-container`**: タブ全体のコンテナ
+- **`.tab-buttons`**: タブボタンのコンテナ（横並び）
+- **`.tab-button`**: 個別のタブボタン（上部角丸、下部角丸なし）
+- **`.tab-button.active`**: アクティブなタブ（緑色ボーダー、白背景）
+- **`.tab-content`**: タブコンテンツ（非表示）
+- **`.tab-content.active`**: アクティブなタブコンテンツ（表示）
+
+**タブUIのスタイル特徴:**
+
+- 非選択時: グレー背景、グレーボーダー
+- 選択時: 白背景、緑色ボーダー
+- 上部のみ角丸（8px）、下部は角丸なし
+- ホバー時: 白背景に変化
+
+#### 成功アラート
+
+```html
+<div class="alert success">操作が完了しました</div>
+```
+
+**成功アラートの仕様:**
+
+- **背景色**: 薄緑色（#e8f5e8）
+- **文字色**: 緑色（var(--success-color)）
+- **ボーダー**: 緑色（#c8e6c8）
+- **アイコン**: チェックマーク（✓）
+- **用途**: 操作完了時の通知
 
 ## JavaScript ガイドライン
 
@@ -192,6 +269,41 @@ element.classList.add("class-name");
 - `alt` 属性の設定
 - キーボードナビゲーションの対応
 - コントラスト比の確保
+
+## CSS分離とリファクタリング
+
+### CSSファイルの構成
+
+```
+assets/styles/
+├── colors.css         # カラーパレット（共通）
+├── common.css         # 共通コンポーネント（ボタン、フォーム、タブUI等）
+└── app-name.css       # アプリ固有のスタイル
+```
+
+### CSS分離の原則
+
+1. **共通スタイル**: `common.css`に配置
+    - ボタン、フォーム、タブUI、アラート等の再利用可能なコンポーネント
+    - 全アプリで使用されるスタイル
+
+2. **アプリ固有スタイル**: `app-name.css`に配置
+    - そのアプリでのみ使用される特殊なスタイル
+    - レイアウト固有の調整
+
+3. **読み込み順序**:
+    ```html
+    <link rel="stylesheet" href="../assets/styles/colors.css" />
+    <link rel="stylesheet" href="../assets/styles/common.css" />
+    <link rel="stylesheet" href="../assets/styles/app-name.css" />
+    ```
+
+### 新しいアプリのCSS作成手順
+
+1. `assets/styles/app-name.css`を作成
+2. アプリ固有のスタイルのみを記述
+3. HTMLで`app-name.css`を読み込み
+4. 共通スタイルは`common.css`を参照
 
 ## ファイル構造
 
