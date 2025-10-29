@@ -3,196 +3,93 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>文字列破損ツール</title>
+        <title>WebApp Collection</title>
+        <link rel="stylesheet" href="assets/styles/colors.css" />
+        <link rel="stylesheet" href="assets/styles/common.css" />
         <style>
-            body {
-                font-family: Arial, sans-serif;
-                max-width: 800px;
-                margin: 0 auto;
+            .app-list {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                margin-top: 30px;
+            }
+
+            .app-item {
+                display: flex;
+                align-items: center;
                 padding: 20px;
-                background-color: #f5f5f5;
+                background-color: var(--bg-primary);
+                border-radius: 8px;
+                box-shadow: 0 2px 8px var(--shadow-light);
+                text-decoration: none;
+                color: inherit;
+                transition: all 0.2s ease;
+                border-left: 4px solid var(--primary-color);
             }
 
-            .container {
-                background-color: white;
-                padding: 30px;
-                border-radius: 10px;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            .app-item:hover {
+                box-shadow: 0 4px 16px var(--shadow-medium);
+                border-left-color: var(--secondary-color);
             }
 
-            h1 {
-                color: #333;
+            .app-icon {
+                font-size: 1.5rem;
+                margin-right: 20px;
+                width: 60px;
                 text-align: center;
-                margin-bottom: 30px;
-            }
-
-            textarea {
-                width: 100%;
-                height: 200px;
-                padding: 15px;
-                border: 2px solid #ddd;
-                border-radius: 5px;
-                font-size: 14px;
-                line-height: 1.5;
-                resize: vertical;
-                box-sizing: border-box;
-            }
-
-            textarea:focus {
-                outline: none;
-                border-color: #4caf50;
-            }
-
-            button {
-                background-color: #4caf50;
-                color: white;
-                padding: 12px 24px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 16px;
-                margin: 10px 5px;
-                transition: background-color 0.3s;
-            }
-
-            button:hover {
-                background-color: #45a049;
-            }
-
-            .button-group {
-                text-align: center;
-                margin: 20px 0;
-            }
-
-            .result {
-                margin-top: 20px;
-                padding: 15px;
-                background-color: #f9f9f9;
-                border-radius: 5px;
-                border-left: 4px solid #4caf50;
-            }
-
-            .sample-text {
-                font-style: italic;
-                color: #666;
-                margin-bottom: 10px;
-            }
-
-            .corruption-controls {
-                margin: 20px 0;
-                padding: 15px;
-                background-color: #f9f9f9;
-                border-radius: 5px;
-                border-left: 4px solid #4caf50;
-            }
-
-            .corruption-controls label {
-                display: block;
-                margin-bottom: 10px;
+                color: var(--primary-color);
                 font-weight: bold;
-                color: #333;
             }
 
-            .corruption-controls input[type="range"] {
-                width: 100%;
-                height: 6px;
-                border-radius: 3px;
-                background: #ddd;
-                outline: none;
-                -webkit-appearance: none;
+            .app-info h3 {
+                margin: 0 0 5px 0;
+                color: var(--text-primary);
+                font-size: 1.2rem;
             }
 
-            .corruption-controls input[type="range"]::-webkit-slider-thumb {
-                -webkit-appearance: none;
-                appearance: none;
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                background: #4caf50;
-                cursor: pointer;
+            .app-info p {
+                margin: 0;
+                color: var(--text-secondary);
+                font-size: 0.9rem;
             }
 
-            .corruption-controls input[type="range"]::-moz-range-thumb {
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                background: #4caf50;
-                cursor: pointer;
-                border: none;
+            .header-section {
+                text-align: center;
+                padding: 30px 20px;
+                background-color: var(--bg-tertiary);
+                color: var(--text-primary);
+                margin-bottom: 30px;
+                border-bottom: 2px solid var(--primary-color);
+            }
+
+            .header-title {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+                font-weight: 300;
+            }
+
+            .header-subtitle {
+                font-size: 1.1rem;
+                opacity: 0.9;
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <h1>文字列破損ツール</h1>
-
-            <div class="sample-text">文字列を破損率に応じてランダムに順番を入れかえ、破損させることができます。</div>
-
-            <div class="corruption-controls">
-                <label for="corruptionRate">破損率: <span id="rateValue">5</span>%</label>
-                <input type="range" id="corruptionRate" min="1" max="100" value="5" oninput="updateRateValue()" />
+            <div class="header-section">
+                <h1 class="header-title">WebApp Collection</h1>
+                <p class="header-subtitle">小さくて便利なツール集</p>
             </div>
 
-            <textarea id="inputText" placeholder="ここにテキストを入力してください..."></textarea>
-
-            <div class="button-group">
-                <button onclick="corruptText()">文字列を破損させる</button>
-                <button onclick="clearText()">クリア</button>
-                <button onclick="loadSampleText()">サンプルテキストを入力</button>
-            </div>
-
-            <div id="result" class="result" style="display: none">
-                <h3>破損されたテキスト:</h3>
-                <div id="corruptedText"></div>
+            <div class="app-list">
+                <a href="string_corruption/index.html" class="app-item">
+                    <div class="app-icon">SC</div>
+                    <div class="app-info">
+                        <h3>文字列破損ツール</h3>
+                        <p>テキストの文字をランダムに並び替えて破損させます</p>
+                    </div>
+                </a>
             </div>
         </div>
-
-        <script>
-            function shuffleWithRate(str, corruptionRate) {
-                const arr = Array.from(str);
-                const moveCount = Math.max(1, Math.floor(arr.length * (corruptionRate / 100)));
-
-                for (let i = 0; i < moveCount; i++) {
-                    const from = Math.floor(Math.random() * arr.length);
-                    const to = Math.floor(Math.random() * arr.length);
-                    const [ch] = arr.splice(from, 1);
-                    arr.splice(to, 0, ch);
-                }
-
-                return arr.join("");
-            }
-
-            function updateRateValue() {
-                const rate = document.getElementById("corruptionRate").value;
-                document.getElementById("rateValue").textContent = rate;
-            }
-
-            function corruptText() {
-                const inputText = document.getElementById("inputText").value;
-                const corruptionRate = parseInt(document.getElementById("corruptionRate").value);
-
-                if (!inputText.trim()) {
-                    alert("テキストを入力してください！");
-                    return;
-                }
-
-                const corruptedText = shuffleWithRate(inputText, corruptionRate);
-
-                // 改行を<br>タグに変換してHTMLとして表示
-                const htmlText = corruptedText.replace(/\n/g, "<br>");
-                document.getElementById("corruptedText").innerHTML = htmlText;
-                document.getElementById("result").style.display = "block";
-            }
-
-            function clearText() {
-                document.getElementById("inputText").value = "";
-                document.getElementById("result").style.display = "none";
-            }
-
-            function loadSampleText() {
-                const sampleText = `あああああああああああああああああああああああああああああああ\nドドドドドドドドドドドドドドドドドドドドドドドドドドドドドドド`;
-                document.getElementById("inputText").value = sampleText;
-            }
-        </script>
     </body>
 </html>
