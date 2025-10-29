@@ -57,13 +57,13 @@
 #### ボタン
 
 ```html
-<!-- プライマリボタン -->
+<!-- プライマリボタン（実行・メインアクション） -->
 <button>アクション</button>
 
-<!-- セカンダリボタン -->
+<!-- セカンダリボタン（サンプル・補助アクション） -->
 <button class="secondary">セカンダリ</button>
 
-<!-- 危険なアクション -->
+<!-- 危険なアクション（クリア・削除） -->
 <button class="danger">削除</button>
 
 <!-- ボタングループ -->
@@ -72,6 +72,18 @@
     <button>ボタン2</button>
 </div>
 ```
+
+**ボタンの配置順序（左から右へ）:**
+
+1. **実行ボタン** - プライマリ（緑色）- メインの機能を実行
+2. **サンプルボタン** - セカンダリ（水色）- サンプルデータの読み込み
+3. **クリアボタン** - 危険（赤色）- データの削除・リセット
+
+**ボタングループのスタイル:**
+
+- `justify-content: flex-start` で左揃え
+- `gap: 8px` で適切な間隔
+- モバイルでは縦並び（`flex-direction: column`）
 
 #### フォーム要素
 
@@ -108,6 +120,30 @@
 <div class="alert error">エラーメッセージ</div>
 <div class="alert info">情報メッセージ</div>
 ```
+
+#### 結果表示エリア
+
+```html
+<!-- 結果表示コンテナ（複数の結果セクションをまとめる） -->
+<div class="results-container">
+    <div class="result-section">
+        <h3>結果タイトル</h3>
+        <div class="result-output">結果の内容</div>
+    </div>
+
+    <div class="result-section">
+        <h3>別の結果タイトル</h3>
+        <div class="result-output">別の結果の内容</div>
+    </div>
+</div>
+```
+
+**結果表示の仕様:**
+
+- **`.results-container`**: ボタンと結果表示エリアの間に50pxの間隔を作る
+- **`.result-section`**: 各結果セクション間に20pxの間隔
+- **`.result-output`**: 結果表示エリア（背景、ボーダー、等幅フォント）
+- **常時表示**: 結果がない場合でも要素は表示し、プレースホルダーテキストを表示する
 
 ## JavaScript ガイドライン
 

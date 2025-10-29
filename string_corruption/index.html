@@ -56,14 +56,6 @@
                 border: none;
             }
 
-            .result {
-                margin-top: 20px;
-                padding: 15px;
-                background-color: var(--bg-tertiary);
-                border-radius: 5px;
-                border-left: 4px solid var(--primary-color);
-            }
-
             .sample-text {
                 font-style: italic;
                 color: var(--text-secondary);
@@ -92,13 +84,15 @@
 
                 <div class="button-group">
                     <button onclick="corruptText()">文字列を破損させる</button>
-                    <button onclick="clearText()">クリア</button>
-                    <button onclick="loadSampleText()">サンプルテキストを入力</button>
+                    <button onclick="loadSampleText()" class="secondary">サンプルテキストを入力</button>
+                    <button onclick="clearText()" class="danger">クリア</button>
                 </div>
 
-                <div id="result" class="result" style="display: none">
-                    <h3>破損されたテキスト:</h3>
-                    <div id="corruptedText"></div>
+                <div class="results-container">
+                    <div class="result-section">
+                        <h3>破損されたテキスト</h3>
+                        <div id="corruptedText" class="result-output">ここに破損されたテキストが表示されます...</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -141,12 +135,11 @@
                 // 改行を<br>タグに変換してHTMLとして表示
                 const htmlText = corruptedText.replace(/\n/g, "<br>");
                 document.getElementById("corruptedText").innerHTML = htmlText;
-                document.getElementById("result").style.display = "block";
             }
 
             function clearText() {
                 document.getElementById("inputText").value = "";
-                document.getElementById("result").style.display = "none";
+                document.getElementById("corruptedText").innerHTML = "ここに破損されたテキストが表示されます...";
             }
 
             function loadSampleText() {
