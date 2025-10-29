@@ -1,0 +1,32 @@
+/* ボタングループ */
+.button-group {
+    margin: 20px 0;
+}
+
+.button-group button {
+    margin: 5px 10px;
+}
+
+.button-group button:first-of-type {
+    margin-left: 0;
+}
+
+.button-group button:last-of-type {
+    margin-right: 0;
+}
+
+@media (max-width: 768px) {
+    .button-group button {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .button-group button:first-of-type {
+        margin-left: 0;
+    }
+
+    .button-group button:last-of-type {
+        margin-right: 0;
+    }
+}

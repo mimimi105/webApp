@@ -5,6 +5,7 @@
     --primary-hover: #45a049;
     --primary-light: #81c784;
     --primary-dark: #388e3c;
+    --primary-transparent: rgba(76, 175, 80, 0.1);
 
     /* セカンダリカラー */
     --secondary-color: #2196f3;
